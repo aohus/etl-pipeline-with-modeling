@@ -1,0 +1,4 @@
+**/hadoop/
+*.tmp
+.DS_store
+*.pyc
