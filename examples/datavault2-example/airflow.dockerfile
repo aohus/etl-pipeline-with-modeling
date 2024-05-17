@@ -5,22 +5,24 @@ FROM gtoonstra/docker-airflow:1.9.0
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 ENV HADOOP_HOME=/usr/local/hadoop
 ENV HIVE_HOME=/usr/local/hive
-ENV PATH=$PATH:$HADOOP_HOME/bin:$HIVE_HOME/bin
+ENV PATH=$PATH:$HADOOP_HOME/bin:$HIVE_HOME/bin:$JAVA_HOME/bin
 
 USER root
 
-RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list
+RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list && \
+    apt-get -o Acquire::Check-Valid-Until=false update
 
 # 필요한 패키지 설치
 RUN apt-get update && \
-    apt-get install -y wget procps openjdk-7-jdk && \
+    apt-get install -y wget procps && \
+    apt-get install -y openjdk-7-jdk && \
     rm -rf /var/lib/apt/lists/* 
 
 # Hadoop 설치
-RUN wget https://downloads.apache.org/hadoop/common/hadoop-2.10.2/hadoop-2.10.2.tar.gz && \
-    tar -xzvf hadoop-2.10.2.tar.gz -C /usr/local/ && \
-    mv /usr/local/hadoop-2.10.2/* $HADOOP_HOME/ && \
-    rm hadoop-2.10.2.tar.gz
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-2.6.0/hadoop-2.6.0.tar.gz && \
+    tar -xzvf hadoop-2.6.0.tar.gz -C /usr/local/ && \
+    mv /usr/local/hadoop-2.6.0/* $HADOOP_HOME/ && \
+    rm hadoop-2.6.0.tar.gz
 
 
 # Hive 설치

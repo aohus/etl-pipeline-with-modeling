@@ -42,7 +42,6 @@ services:
           - EXECUTOR=Local
           - INSTALL_HIVE=y
       volumes:
-          - ./examples/datavault2-example/airflow.cfg:/usr/local/airflow/airflow.cfg
           - ./examples/datavault2-example/dags:/usr/local/airflow/dags
           - ./examples/datavault2-example/sql:/usr/local/airflow/sql
           - ./examples/datavault2-example/core-site.xml:/core-site.xml

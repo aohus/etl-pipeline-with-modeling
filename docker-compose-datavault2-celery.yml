@@ -1,14 +1,13 @@
 version: '2'
 services:
 #   redis:
-#     image: redis:latest
+#     image: redis:3.1.7
 #     container_name: redis
 #     ports:
 #       - "6379:6379"
 
   postgres:
       image: postgres:9.6
-      container_name: postgres
       environment:
           - POSTGRES_USER=airflow
           - POSTGRES_PASSWORD=airflow
@@ -42,7 +41,7 @@ services:
   webserver:
       build:
         context: ./examples/datavault2-example
-        dockerfile: airflow.dockerfile
+        dockerfile: airflow_v2.dockerfile
       container_name: airflow
       restart: always
       depends_on:

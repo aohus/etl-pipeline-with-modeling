@@ -1,35 +1,121 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Set default permissions for airflow logs
-: "${AIRFLOW_UID:="1000"}"
-: "${AIRFLOW_GID:="0"}"
+AIRFLOW_HOME="/usr/local/airflow"
+HIVE_DIR="/usr/local/hive"
+HADOOP_DIR="/usr/local/hadoop"
+CMD="airflow"
+TRY_LOOP="20"
 
-# Wait for Postgres to be ready
-if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ] || [ "$AIRFLOW__CORE__EXECUTOR" = "CeleryExecutor" ]; then
-  if [ -n "$AIRFLOW__CORE__SQL_ALCHEMY_CONN" ]; then
-    echo "Checking for Postgres..."
-    while ! nc -z $(echo $AIRFLOW__CORE__SQL_ALCHEMY_CONN | sed -e 's|.*://\([^:]*\).*|\1|'):5432; do
-      echo "Waiting for Postgres server..."
-      sleep 1
+: ${REDIS_HOST:="redis"}
+: ${REDIS_PORT:="6379"}
+: ${REDIS_PASSWORD:=""}
+
+: ${POSTGRES_HOST:="postgres"}
+: ${POSTGRES_PORT:="5432"}
+: ${POSTGRES_USER:="airflow"}
+: ${POSTGRES_PASSWORD:="airflow"}
+: ${POSTGRES_DB:="airflow"}
+
+: ${FERNET_KEY:=$(python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)")}
+
+# Load DAGs exemples (default: Yes)
+if [ "$LOAD_EX" = "n" ]; then
+    sed -i "s/load_examples = True/load_examples = False/" "$AIRFLOW_HOME"/airflow.cfg
+fi
+
+# Install custome python package if requirements.txt is present
+if [ -e "/requirements.txt" ]; then
+    $(which pip) install --user -r /requirements.txt
+fi
+
+# Load DAGs exemples (default: Yes)
+if [ "$INSTALL_HIVE" = "y" ]; then
+    # mkdir -p /tmp/hadoop
+    # (cd /tmp/hadoop; wget https://archive.apache.org/dist/hadoop/common/hadoop-2.6.0/hadoop-2.6.0.tar.gz)
+    # (cd /tmp/hadoop; tar -zxf hadoop-2.6.0.tar.gz)
+    # (cd /tmp/hadoop; mv hadoop-2.6.0/* $HADOOP_DIR)
+    # mkdir -p /tmp/hive
+    # (cd /tmp/hive; wget https://downloads.apache.org/hive/hive-2.3.10/apache-hive-2.3.10-bin.tar.gz)
+    # (cd /tmp/hive; tar -zxf apache-hive-2.3.10-bin.tar.gz)
+    # (cd /tmp/hive; mv apache-hive-2.3.10-bin.tar.gz/* $HIVE_DIR)
+    # rm -rf /tmp/hadoop
+    # rm -rf /tmp/hive
+    cp /core-site.xml $HADOOP_DIR/etc/hadoop
+    cp /hdfs-site.xml $HADOOP_DIR/etc/hadoop
+    cp /mapred-site.xml $HADOOP_DIR/etc/hadoop
+fi
+
+
+# Update airflow config - Fernet key
+sed -i "s|\$FERNET_KEY|$FERNET_KEY|" "$AIRFLOW_HOME"/airflow.cfg
+
+if [ -n "$REDIS_PASSWORD" ]; then
+    REDIS_PREFIX=:${REDIS_PASSWORD}@
+else
+    REDIS_PREFIX=
+fi
+
+# Wait for Postresql
+if [ "$1" = "webserver" ] || [ "$1" = "worker" ] || [ "$1" = "scheduler" ] ; then
+  i=0
+  while ! nc -z $POSTGRES_HOST $POSTGRES_PORT >/dev/null 2>&1 < /dev/null; do
+    i=$((i+1))
+    if [ "$1" = "webserver" ]; then
+      echo "$(date) - waiting for ${POSTGRES_HOST}:${POSTGRES_PORT}... $i/$TRY_LOOP"
+      if [ $i -ge $TRY_LOOP ]; then
+        echo "$(date) - ${POSTGRES_HOST}:${POSTGRES_PORT} still not reachable, giving up"
+        exit 1
+      fi
+    fi
+    sleep 10
+  done
+fi
+
+# Update configuration depending the type of Executor
+if [ "$EXECUTOR" = "Celery" ]
+then
+  # Wait for Redis
+  if [ "$1" = "webserver" ] || [ "$1" = "worker" ] || [ "$1" = "scheduler" ] || [ "$1" = "flower" ] ; then
+    j=0
+    while ! nc -z $REDIS_HOST $REDIS_PORT >/dev/null 2>&1 < /dev/null; do
+      j=$((j+1))
+      if [ $j -ge $TRY_LOOP ]; then
+        echo "$(date) - $REDIS_HOST still not reachable, giving up"
+        exit 1
+      fi
+      echo "$(date) - waiting for Redis... $j/$TRY_LOOP"
+      sleep 5
     done
-    echo "Postgres is up and running!"
   fi
+  sed -i "s#celery_result_backend = db+postgresql://airflow:airflow@postgres/airflow#celery_result_backend = db+postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB#" "$AIRFLOW_HOME"/airflow.cfg
+  sed -i "s#sql_alchemy_conn = postgresql+psycopg2://airflow:airflow@postgres/airflow#sql_alchemy_conn = postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB#" "$AIRFLOW_HOME"/airflow.cfg
+  sed -i "s#broker_url = redis://redis:6379/1#broker_url = redis://$REDIS_PREFIX$REDIS_HOST:$REDIS_PORT/1#" "$AIRFLOW_HOME"/airflow.cfg
+  if [ "$1" = "webserver" ]; then
+    echo "Initialize database..."
+    $CMD initdb
+    exec $CMD webserver
+  else
+    sleep 10
+    exec $CMD "$@"
+  fi
+elif [ "$EXECUTOR" = "Local" ]
+then
+  sed -i "s/executor = CeleryExecutor/executor = LocalExecutor/" "$AIRFLOW_HOME"/airflow.cfg
+  sed -i "s#sql_alchemy_conn = postgresql+psycopg2://airflow:airflow@postgres/airflow#sql_alchemy_conn = postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB#" "$AIRFLOW_HOME"/airflow.cfg
+  sed -i "s#broker_url = redis://redis:6379/1#broker_url = redis://$REDIS_PREFIX$REDIS_HOST:$REDIS_PORT/1#" "$AIRFLOW_HOME"/airflow.cfg
+  echo "Initialize database..."
+  $CMD initdb
+  exec $CMD webserver &
+  exec $CMD scheduler
+# By default we use SequentialExecutor
+else
+  if [ "$1" = "version" ]; then
+    exec $CMD version
+    exit
+  fi
+  sed -i "s/executor = CeleryExecutor/executor = SequentialExecutor/" "$AIRFLOW_HOME"/airflow.cfg
+  sed -i "s#sql_alchemy_conn = postgresql+psycopg2://airflow:airflow@postgres/airflow#sql_alchemy_conn = sqlite:////usr/local/airflow/airflow.db#" "$AIRFLOW_HOME"/airflow.cfg
+  echo "Initialize database..."
+  $CMD initdb
+  exec $CMD webserver
 fi
-
-# Initialize database and create the necessary tables
-if [ "$1" = "webserver" ]; then
-  echo "Initializing database..."
-  airflow db upgrade
-
-  echo "Creating admin user..."
-  airflow users create \
-    --username admin \
-    --firstname First \
-    --lastname Last \
-    --role Admin \
-    --email admin@example.com \
-    --password admin
-fi
-
-# Start Airflow
-exec "$@"
