@@ -31,7 +31,9 @@ services:
       tty: true
       command: /usr/bin/docker-quickstart
   webserver:
-      image: gtoonstra/docker-airflow:1.9.0
+      build:
+        context: ./examples/datavault2-example
+        dockerfile: airflow_v2.dockerfile
       container_name: airflow
       restart: always
       depends_on:

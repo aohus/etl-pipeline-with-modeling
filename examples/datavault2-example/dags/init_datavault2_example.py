@@ -87,8 +87,8 @@ def init_datavault2_example():
             "host": "hive",
             "schema": "default",
             "port": 10000,
-            "login": "cloudera",
-            "password": "cloudera",
+            "login": "hive",
+            "password": "hive",
             "extra": json.dumps(
                 {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
             ),
@@ -103,8 +103,8 @@ def init_datavault2_example():
             "host": "hive",
             "schema": ADVWORKS_STAGING,
             "port": 10000,
-            "login": "cloudera",
-            "password": "cloudera",
+            "login": "hive",
+            "password": "hive",
             "extra": json.dumps(
                 {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
             ),
@@ -119,8 +119,8 @@ def init_datavault2_example():
             "host": "hive",
             "schema": DATAVAULT,
             "port": 10000,
-            "login": "cloudera",
-            "password": "cloudera",
+            "login": "hive",
+            "password": "hive",
             "extra": json.dumps(
                 {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
             ),
@@ -135,8 +135,8 @@ def init_datavault2_example():
             "host": "hive",
             "schema": "dv_temp",
             "port": 10000,
-            "login": "cloudera",
-            "password": "cloudera",
+            "login": "hive",
+            "password": "hive",
             "extra": json.dumps(
                 {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
             ),
@@ -151,8 +151,8 @@ def init_datavault2_example():
             "host": "hive",
             "schema": "dv_star",
             "port": 10000,
-            "login": "cloudera",
-            "password": "cloudera",
+            "login": "hive",
+            "password": "hive",
             "extra": json.dumps(
                 {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
             ),
@@ -166,7 +166,7 @@ def init_datavault2_example():
             "conn_type": "hiveserver2",
             "host": "hive",
             "schema": "dv_star",
-            "login": "cloudera",
+            "login": "hive",
             "port": 10000,
             "extra": json.dumps({"authMechanism": "NOSASL"}),
         },

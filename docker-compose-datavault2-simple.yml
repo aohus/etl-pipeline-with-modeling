@@ -1,0 +1,99 @@
+version: "3"
+services:
+  namenode:
+    container_name: namenode
+    image: apache/hadoop:3
+    hostname: namenode
+    command: ["hdfs", "namenode"]
+    ports:
+      - 9870:9870
+      - 8020:8020
+    env_file:
+      - ./examples/datavault2-example/hadoop/hadoop_config
+    environment:
+        ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+
+  datanode:
+    container_name: datanode
+    depends_on:
+      - namenode
+    links:
+      - namenode:namenode        
+    image: apache/hadoop:3
+    command: ["hdfs", "datanode"]
+    env_file:
+      - ./examples/datavault2-example/hadoop/hadoop_config
+
+  hive:
+    container_name: hive
+    depends_on:
+      - namenode
+      - datanode        
+      - nodemanager        
+      - resourcemanager                        
+    image: apache/hive:3.1.3
+    ports:
+      - 10000:10000
+      - 10002:10002
+    volumes:
+      - ./examples/datavault2-example/hadoop/hive-site-simple.xml:/opt/hive/conf/hive-site.xml
+    environment:
+        SERVICE_NAME: hiveserver2
+
+  resourcemanager:
+    image: apache/hadoop:3
+    hostname: resourcemanager
+    command: ["yarn", "resourcemanager"]
+    ports:
+        - 8088:8088
+    env_file:
+      - ./examples/datavault2-example/hadoop/hadoop_config
+
+  nodemanager:
+    image: apache/hadoop:3
+    command: ["yarn", "nodemanager"]
+    env_file:
+      - ./examples/datavault2-example/hadoop/hadoop_config
+
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - 5432:5432
+    volumes:
+      - ./examples/datavault2-example/setup/100_create_database.sql:/docker-entrypoint-initdb.d/100_create_database.sql
+      - ./examples/datavault2-example/setup/200_create_tables.sql:/docker-entrypoint-initdb.d/200_create_tables.sql
+      - ./examples/datavault2-example/setup/300_permissions.sql:/docker-entrypoint-initdb.d/300_permissions.sql
+      - ./examples/datavault2-example/setup/data:/docker-entrypoint-initdb.d/data
+
+  webserver:
+    build:
+      context: ./examples/datavault2-example
+      dockerfile: airflow.dockerfile
+    container_name: airflow
+    restart: always
+    depends_on:
+      - postgres
+      - hive
+    #   - redis
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=Local
+      - INSTALL_HIVE=y
+    volumes:
+      - ./examples/datavault2-example/dags:/usr/local/airflow/dags
+      - ./examples/datavault2-example/sql:/usr/local/airflow/sql
+      - ./examples/datavault2-example/hadoop/core-site.xml:/usr/local/hadoop/etc/hadoop/core-site.xml
+      - ./examples/datavault2-example/hadoop/hdfs-site.xml:/usr/local/hadoop/etc/hadoop/hdfs-site.xml
+      - ./examples/datavault2-example/hadoop/mapred-site.xml:/usr/local/hadoop/etc/hadoop/mapred-site.xml
+    #   - ./examples/datavault2-example/airflow.cfg:/usr/local/airflow/airflow.cfg
+    #   - ./.keyfile.json:/usr/local/airflow/keyfile.json:ro
+    ports:
+      - "8080:8080"
+
+volumes:
+  namenode:
+  datanode:
