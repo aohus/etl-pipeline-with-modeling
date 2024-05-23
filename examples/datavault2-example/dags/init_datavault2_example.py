@@ -90,7 +90,7 @@ def init_datavault2_example():
             "login": "hive",
             "password": "hive",
             "extra": json.dumps(
-                {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
+                {"hive_cli_params": "", "auth": None, "use_beeline": "true"}
             ),
         },
     )
@@ -106,7 +106,7 @@ def init_datavault2_example():
             "login": "hive",
             "password": "hive",
             "extra": json.dumps(
-                {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
+                {"hive_cli_params": "", "auth": None, "use_beeline": "true"}
             ),
         },
     )
@@ -122,7 +122,7 @@ def init_datavault2_example():
             "login": "hive",
             "password": "hive",
             "extra": json.dumps(
-                {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
+                {"hive_cli_params": "", "auth": None, "use_beeline": "true"}
             ),
         },
     )
@@ -138,7 +138,7 @@ def init_datavault2_example():
             "login": "hive",
             "password": "hive",
             "extra": json.dumps(
-                {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
+                {"hive_cli_params": "", "auth": None, "use_beeline": "true"}
             ),
         },
     )
@@ -154,7 +154,7 @@ def init_datavault2_example():
             "login": "hive",
             "password": "hive",
             "extra": json.dumps(
-                {"hive_cli_params": "", "auth": "noSasl", "use_beeline": "true"}
+                {"hive_cli_params": "", "auth": None, "use_beeline": "true"}
             ),
         },
     )
@@ -168,7 +168,7 @@ def init_datavault2_example():
             "schema": "dv_star",
             "login": "hive",
             "port": 10000,
-            "extra": json.dumps({"authMechanism": "NOSASL"}),
+            "extra": json.dumps({}),
         },
     )
 
