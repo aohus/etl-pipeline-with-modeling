@@ -80,7 +80,7 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/* /usr/share/doc/*
 
 # Configure entrypoint and airflow configuration
-COPY entrypoint.sh /entrypoint.sh
+COPY airflow_entrypoint.sh /entrypoint.sh
 COPY airflow.cfg /usr/local/airflow/airflow.cfg
 RUN chmod +x /entrypoint.sh && chown -R airflow: ${AIRFLOW_HOME}
 
