@@ -18,7 +18,7 @@ SELECT DISTINCT
     , so.freight
     , so.totaldue
 FROM
-                advworks_staging.salesorderheader_{{ts_nodash}} so
+                advworks_staging.salesorderheader_{{execution_date.strftime('%Y%m%dt%H%M%S')}} so
 LEFT OUTER JOIN dv_raw.sat_salesorder sat ON (
                 sat.hkey_salesorder = so.hkey_salesorder
             AND sat.load_end_dtm IS NULL)

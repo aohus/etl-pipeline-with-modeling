@@ -7,7 +7,7 @@ SELECT DISTINCT
     a.record_source,
     a.load_dtm
 FROM
-           advworks_staging.salesorderheader_{{ts_nodash}} a
+           advworks_staging.salesorderheader_{{execution_date.strftime('%Y%m%dt%H%M%S')}} a
 WHERE
     NOT EXISTS (
         SELECT 

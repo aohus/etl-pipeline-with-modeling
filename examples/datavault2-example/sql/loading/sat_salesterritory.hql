@@ -11,7 +11,7 @@ SELECT DISTINCT
     , st.costytd
     , st.costlastyear
 FROM
-                advworks_staging.salesterritory_{{ts_nodash}} st
+                advworks_staging.salesterritory_{{execution_date.strftime('%Y%m%dt%H%M%S')}} st
 LEFT OUTER JOIN dv_raw.sat_salesterritory sat ON (
                 sat.hkey_salesterritory = st.hkey_salesterritory
             AND sat.load_end_dtm IS NULL)

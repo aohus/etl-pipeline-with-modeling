@@ -167,7 +167,7 @@ Let's look at the flow in more detail:
             # The SQL running on postgres
             sql=sql,
             # Create and recreate a hive table with the <name>_yyyymmddthhmmss pattern
-            hive_table=hive_table + '_{{ts_nodash}}',
+            hive_table=hive_table + '_{{execution_date.strftime('%Y%m%dt%H%M%S')}}',
             postgres_conn_id='adventureworks',
             hive_cli_conn_id='hive_advworks_staging',
             # Create a destination table, drop and recreate it every run.
@@ -280,7 +280,7 @@ business key will win the record inserted here.:
         p.load_dtm,
         p.productnumber
     FROM
-        advworks_staging.product_{{ts_nodash}} p
+        advworks_staging.product_{{execution_date.strftime('%Y%m%dt%H%M%S')}} p
     WHERE
         p.productnumber NOT IN (
             SELECT hub.productnumber FROM dv_raw.hub_product hub
@@ -300,7 +300,7 @@ Loading a link is basically tying some hubs together. Any details related to the
         sod.load_dtm,
         sod.salesorderdetailid
     FROM
-               advworks_staging.salesorderdetail_{{ts_nodash}} sod
+               advworks_staging.salesorderdetail_{{execution_date.strftime('%Y%m%dt%H%M%S')}} sod
     WHERE
         NOT EXISTS (
             SELECT 
@@ -331,7 +331,7 @@ Splitting a satellite is a common practice to record data that has different rat
         , so.unitprice
         , so.unitpricediscount
     FROM
-                    advworks_staging.salesorderdetail_{{ts_nodash}} so
+                    advworks_staging.salesorderdetail_{{execution_date.strftime('%Y%m%dt%H%M%S')}} so
     LEFT OUTER JOIN dv_raw.sat_salesorderdetail sat ON (
                     sat.hkey_salesorderdetail = so.hkey_salesorderdetail
                 AND sat.load_end_dtm IS NULL)

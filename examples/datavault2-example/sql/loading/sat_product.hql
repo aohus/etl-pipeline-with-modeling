@@ -24,7 +24,7 @@ SELECT DISTINCT
     , p.sellenddate
     , p.discontinueddate
 FROM
-                advworks_staging.product_{{ts_nodash}} p
+                advworks_staging.product_{{execution_date.strftime('%Y%m%dt%H%M%S')}} p
 LEFT OUTER JOIN dv_raw.sat_product sat ON (
                 sat.hkey_product = p.hkey_product
             AND sat.load_end_dtm IS NULL)

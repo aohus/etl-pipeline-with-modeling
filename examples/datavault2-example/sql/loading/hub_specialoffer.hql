@@ -5,7 +5,7 @@ SELECT DISTINCT
     so.load_dtm,
     so.specialofferid
 FROM
-    advworks_staging.specialoffer_{{ts_nodash}} so
+    advworks_staging.specialoffer_{{execution_date.strftime('%Y%m%dt%H%M%S')}} so
 WHERE
     so.specialofferid NOT IN (
         SELECT hub.specialofferid FROM dv_raw.hub_specialoffer hub

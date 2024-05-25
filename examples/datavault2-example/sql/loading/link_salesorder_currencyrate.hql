@@ -6,7 +6,7 @@ SELECT DISTINCT
     cr.record_source,
     cr.load_dtm
 FROM
-           advworks_staging.salesorderheader_{{ts_nodash}} cr
+           advworks_staging.salesorderheader_{{execution_date.strftime('%Y%m%dt%H%M%S')}} cr
 WHERE
     cr.currencyrateid IS NOT NULL
 AND NOT EXISTS (

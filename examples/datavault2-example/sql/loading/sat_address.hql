@@ -8,7 +8,7 @@ SELECT DISTINCT
     , a.city
     , a.spatiallocation
 FROM
-                advworks_staging.address_{{ts_nodash}} a
+                advworks_staging.address_{{execution_date.strftime('%Y%m%dt%H%M%S')}} a
 LEFT OUTER JOIN dv_raw.sat_address sat ON (
                 sat.hkey_address = a.hkey_address
             AND sat.load_end_dtm IS NULL)

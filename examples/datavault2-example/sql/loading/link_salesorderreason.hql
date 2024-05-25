@@ -6,7 +6,7 @@ SELECT DISTINCT
     sor.record_source,
     sor.load_dtm
 FROM
-           advworks_staging.salesorderheadersalesreason_{{ts_nodash}} sor
+           advworks_staging.salesorderheadersalesreason_{{execution_date.strftime('%Y%m%dt%H%M%S')}} sor
 WHERE
     NOT EXISTS (
         SELECT 

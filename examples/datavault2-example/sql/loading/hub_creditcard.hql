@@ -5,7 +5,7 @@ SELECT DISTINCT
     cc.load_dtm,
     cc.cardnumber
 FROM
-    advworks_staging.creditcard_{{ts_nodash}} cc
+    advworks_staging.creditcard_{{execution_date.strftime('%Y%m%dt%H%M%S')}} cc
 WHERE
     cc.cardnumber NOT IN (
         SELECT hub.cardnumber FROM dv_raw.hub_creditcard hub

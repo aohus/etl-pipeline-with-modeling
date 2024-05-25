@@ -7,7 +7,7 @@ SELECT DISTINCT
     sod.record_source,
     sod.load_dtm
 FROM
-           advworks_staging.salesorderdetail_{{ts_nodash}} sod
+           advworks_staging.salesorderdetail_{{execution_date.strftime('%Y%m%dt%H%M%S')}} sod
 WHERE
     NOT EXISTS (
         SELECT 

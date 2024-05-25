@@ -6,7 +6,7 @@ SELECT DISTINCT
     a.record_source,
     a.load_dtm
 FROM
-           advworks_staging.address_{{ts_nodash}} a
+           advworks_staging.address_{{execution_date.strftime('%Y%m%dt%H%M%S')}} a
 WHERE
     NOT EXISTS (
         SELECT 

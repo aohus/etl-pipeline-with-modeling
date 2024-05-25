@@ -9,7 +9,7 @@ SELECT DISTINCT
     , cc.expmonth
     , cc.expyear
 FROM
-                advworks_staging.creditcard_{{ts_nodash}} cc
+                advworks_staging.creditcard_{{execution_date.strftime('%Y%m%dt%H%M%S')}} cc
 LEFT OUTER JOIN dv_raw.sat_creditcard sat ON (
                 sat.hkey_creditcard = cc.hkey_creditcard
             AND sat.load_end_dtm IS NULL)

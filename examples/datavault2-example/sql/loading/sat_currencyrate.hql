@@ -8,7 +8,7 @@ SELECT DISTINCT
     , cr.averagerate
     , cr.endofdayrate
 FROM
-                advworks_staging.currencyrate_{{ts_nodash}} cr
+                advworks_staging.currencyrate_{{execution_date.strftime('%Y%m%dt%H%M%S')}} cr
 LEFT OUTER JOIN dv_raw.sat_currencyrate sat ON (
                 sat.hkey_currencyrate = cr.hkey_currencyrate
             AND sat.load_end_dtm IS NULL)

@@ -6,7 +6,7 @@ SELECT DISTINCT
     soh.record_source,
     soh.load_dtm
 FROM
-           advworks_staging.salesorderheader_{{ts_nodash}} soh
+           advworks_staging.salesorderheader_{{execution_date.strftime('%Y%m%dt%H%M%S')}} soh
 WHERE
     soh.creditcardid IS NOT NULL 
 AND NOT EXISTS (

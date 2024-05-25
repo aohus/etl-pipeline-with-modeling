@@ -6,7 +6,7 @@ SELECT DISTINCT
     sp.stateprovincecode,
     sp.countryregioncode
 FROM
-    advworks_staging.stateprovince_{{ts_nodash}} sp
+    advworks_staging.stateprovince_{{execution_date.strftime('%Y%m%dt%H%M%S')}} sp
 WHERE
     NOT EXISTS (
         SELECT 

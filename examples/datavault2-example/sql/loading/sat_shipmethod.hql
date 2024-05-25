@@ -9,7 +9,7 @@ SELECT DISTINCT
     , sm.shipbase
     , sm.shiprate
 FROM
-                advworks_staging.shipmethod_{{ts_nodash}} sm
+                advworks_staging.shipmethod_{{execution_date.strftime('%Y%m%dt%H%M%S')}} sm
 LEFT OUTER JOIN dv_raw.sat_shipmethod sat ON (
                 sat.hkey_shipmethod = sm.hkey_shipmethod
             AND sat.load_end_dtm IS NULL)

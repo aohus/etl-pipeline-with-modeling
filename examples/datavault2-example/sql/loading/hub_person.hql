@@ -5,7 +5,7 @@ SELECT DISTINCT
     p.load_dtm,
     p.businessentityid
 FROM
-    advworks_staging.person_{{ts_nodash}} p
+    advworks_staging.person_{{execution_date.strftime('%Y%m%dt%H%M%S')}} p
 WHERE
     p.businessentityid NOT IN (
         SELECT hub.businessentityid FROM dv_raw.hub_person hub

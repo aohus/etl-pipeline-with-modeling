@@ -9,7 +9,7 @@ SELECT DISTINCT
     , sp.name
     , sp.countryregioncode
 FROM
-                advworks_staging.stateprovince_{{ts_nodash}} sp
+                advworks_staging.stateprovince_{{execution_date.strftime('%Y%m%dt%H%M%S')}} sp
 LEFT OUTER JOIN dv_raw.sat_stateprovince sat ON (
                 sat.hkey_stateprovince = sp.hkey_stateprovince
             AND sat.load_end_dtm IS NULL)

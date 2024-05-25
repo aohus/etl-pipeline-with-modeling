@@ -6,7 +6,7 @@ SELECT DISTINCT
     , c.record_source
     , c.name
 FROM
-                advworks_staging.currency_{{ts_nodash}} c
+                advworks_staging.currency_{{execution_date.strftime('%Y%m%dt%H%M%S')}} c
 LEFT OUTER JOIN dv_raw.sat_currency sat ON (
                 sat.hkey_currency = c.hkey_currency
             AND sat.load_end_dtm IS NULL)

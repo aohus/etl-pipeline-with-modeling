@@ -9,7 +9,7 @@ SELECT DISTINCT
     , so.unitprice
     , so.unitpricediscount
 FROM
-                advworks_staging.salesorderdetail_{{ts_nodash}} so
+                advworks_staging.salesorderdetail_{{execution_date.strftime('%Y%m%dt%H%M%S')}} so
 LEFT OUTER JOIN dv_raw.sat_salesorderdetail sat ON (
                 sat.hkey_salesorderdetail = so.hkey_salesorderdetail
             AND sat.load_end_dtm IS NULL)

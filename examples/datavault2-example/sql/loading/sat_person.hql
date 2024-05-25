@@ -13,7 +13,7 @@ SELECT DISTINCT
     , p.suffix
     , p.emailpromotion
 FROM
-                advworks_staging.person_{{ts_nodash}} p
+                advworks_staging.person_{{execution_date.strftime('%Y%m%dt%H%M%S')}} p
 LEFT OUTER JOIN dv_raw.sat_person sat ON (
                 sat.hkey_person = p.hkey_person
             AND sat.load_end_dtm IS NULL)

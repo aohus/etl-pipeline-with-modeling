@@ -7,7 +7,7 @@ SELECT DISTINCT
     , sr.name
     , sr.reasontype
 FROM
-                advworks_staging.salesreason_{{ts_nodash}} sr
+                advworks_staging.salesreason_{{execution_date.strftime('%Y%m%dt%H%M%S')}} sr
 LEFT OUTER JOIN dv_raw.sat_salesreason sat ON (
                 sat.hkey_salesreason = sr.hkey_salesreason
             AND sat.load_end_dtm IS NULL)
