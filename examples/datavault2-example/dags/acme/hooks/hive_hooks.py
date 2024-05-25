@@ -248,7 +248,7 @@ class HiveCliHook(BaseHook):
 
     def transfer_data_file(self, filepath, verbose=True):
         filename = os.path.basename(filepath)
-        destination_path = "/user/cloudera/{0}".format(filename)
+        destination_path = "hdfs://namenode:8020/user/cloudera/{0}".format(filename)
 
         hdfs_cmd = ["hdfs", "dfs", "-put", filepath, destination_path]
         if verbose:
