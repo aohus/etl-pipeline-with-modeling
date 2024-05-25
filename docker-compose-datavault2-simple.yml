@@ -4,12 +4,13 @@ services:
     container_name: namenode
     image: apache/hadoop:3
     hostname: namenode
-    command: ["hdfs", "namenode"]
+    command: ["hdfs", "namenode"] 
+    # command: ["hdfs namenode && hdfs dfs -mkdir -p /user/cloudera && hdfs dfs -chown -R airflow:supergroup /user/cloudera && hdfs dfs -chmod -R 775 /user/cloudera"]
     ports:
       - 9870:9870
       - 8020:8020
     env_file:
-      - ./examples/datavault2-example/hadoop/hadoop_config
+      - ./examples/datavault2-example/hadoop_config/hadoop_config
     environment:
         ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
 
@@ -22,7 +23,7 @@ services:
     image: apache/hadoop:3
     command: ["hdfs", "datanode"]
     env_file:
-      - ./examples/datavault2-example/hadoop/hadoop_config
+      - ./examples/datavault2-example/hadoop_config/hadoop_config
 
   hive:
     container_name: hive
@@ -36,7 +37,8 @@ services:
       - 10000:10000
       - 10002:10002
     volumes:
-      - ./examples/datavault2-example/hadoop/hive-site-simple.xml:/opt/hive/conf/hive-site.xml
+      - ./examples/datavault2-example/hadoop_config/hive-site-simple.xml:/opt/hive/conf/hive-site.xml
+      # - ./examples/datavault2-example/hadoop_config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
     environment:
         SERVICE_NAME: hiveserver2
 
@@ -47,13 +49,13 @@ services:
     ports:
         - 8088:8088
     env_file:
-      - ./examples/datavault2-example/hadoop/hadoop_config
+      - ./examples/datavault2-example/hadoop_config/hadoop_config
 
   nodemanager:
     image: apache/hadoop:3
     command: ["yarn", "nodemanager"]
     env_file:
-      - ./examples/datavault2-example/hadoop/hadoop_config
+      - ./examples/datavault2-example/hadoop_config/hadoop_config
 
   postgres:
     image: postgres:9.6
@@ -78,7 +80,6 @@ services:
     depends_on:
       - postgres
       - hive
-    #   - redis
     environment:
       - LOAD_EX=n
       - EXECUTOR=Local
@@ -86,14 +87,18 @@ services:
     volumes:
       - ./examples/datavault2-example/dags:/usr/local/airflow/dags
       - ./examples/datavault2-example/sql:/usr/local/airflow/sql
-      - ./examples/datavault2-example/hadoop/core-site.xml:/usr/local/hadoop/etc/hadoop/core-site.xml
-      - ./examples/datavault2-example/hadoop/hdfs-site.xml:/usr/local/hadoop/etc/hadoop/hdfs-site.xml
-      - ./examples/datavault2-example/hadoop/mapred-site.xml:/usr/local/hadoop/etc/hadoop/mapred-site.xml
+      - ./examples/datavault2-example/hadoop_config/core-site.xml:/usr/local/hadoop/etc/hadoop/core-site.xml
+      - ./examples/datavault2-example/hadoop_config/hdfs-site.xml:/usr/local/hadoop/etc/hadoop/hdfs-site.xml
+      - ./examples/datavault2-example/hadoop_config/mapred-site.xml:/usr/local/hadoop/etc/hadoop/mapred-site.xml
     #   - ./examples/datavault2-example/airflow.cfg:/usr/local/airflow/airflow.cfg
     #   - ./.keyfile.json:/usr/local/airflow/keyfile.json:ro
     ports:
       - "8080:8080"
-
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 volumes:
   namenode:
   datanode:
