@@ -4,15 +4,18 @@ services:
     container_name: namenode
     image: apache/hadoop:3
     hostname: namenode
-    command: ["hdfs", "namenode"] 
-    # command: ["hdfs namenode && hdfs dfs -mkdir -p /user/cloudera && hdfs dfs -chown -R airflow:supergroup /user/cloudera && hdfs dfs -chmod -R 775 /user/cloudera"]
+    # command: ["hdfs", "namenode"] 
     ports:
       - 9870:9870
       - 8020:8020
+    volumes:
+      - ./examples/datavault2-example/hadoop_config/namenode_starter.sh:/opt/starter.sh
+      - ./examples/datavault2-example/hadoop_config/airflow_connector.sh:/opt/airflow_connector.sh
     env_file:
       - ./examples/datavault2-example/hadoop_config/hadoop_config
     environment:
         ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+    entrypoint: ["/usr/local/bin/dumb-init", "--", "/opt/starter.sh"]
 
   datanode:
     container_name: datanode
@@ -38,9 +41,10 @@ services:
       - 10002:10002
     volumes:
       - ./examples/datavault2-example/hadoop_config/hive-site-simple.xml:/opt/hive/conf/hive-site.xml
-      # - ./examples/datavault2-example/hadoop_config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./examples/datavault2-example/hadoop_config/core-site.xml:/opt/hive/conf/core-site.xml
     environment:
-        SERVICE_NAME: hiveserver2
+      - SERVICE_NAME=hiveserver2
+      - HIVE_CUSTOM_CONF_DIR=/opt/hive/conf
 
   resourcemanager:
     image: apache/hadoop:3
