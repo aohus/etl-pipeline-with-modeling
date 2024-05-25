@@ -58,21 +58,21 @@ RUN python -m pip install --upgrade pip && \
     pip install 'apache-airflow[celery, crypto, postgres, hive, hdfs, jdbc]==1.9.0' && \
     pip install 'celery[redis]==3.1.17' thrift==0.13.0
 
-# # Hadoop 설치
-# RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz && \
-#     tar -xzvf hadoop-3.3.6.tar.gz -C /usr/local/ && \
-#     mv /usr/local/hadoop-3.3.6/* $HADOOP_HOME/ && \
-#     rm hadoop-3.3.6.tar.gz
+# Hadoop 설치
+RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz && \
+    tar -xzvf hadoop-3.3.6.tar.gz -C /usr/local/ && \
+    mv /usr/local/hadoop-3.3.6/* $HADOOP_HOME/ && \
+    rm hadoop-3.3.6.tar.gz
 
-# # Hive 설치
-# RUN wget https://downloads.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz && \
-#     tar -xzvf apache-hive-3.1.3-bin.tar.gz -C /usr/local/ && \
-#     mv /usr/local/apache-hive-3.1.3-bin/* $HIVE_HOME/ && \
-#     rm apache-hive-3.1.3-bin.tar.gz && \
-#     rm -rf /usr/local/apache-hive-3.1.3-bin/
+# Hive 설치
+RUN wget https://downloads.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz && \
+    tar -xzvf apache-hive-3.1.3-bin.tar.gz -C /usr/local/ && \
+    mv /usr/local/apache-hive-3.1.3-bin/* $HIVE_HOME/ && \
+    rm apache-hive-3.1.3-bin.tar.gz && \
+    rm -rf /usr/local/apache-hive-3.1.3-bin/
 
-COPY hadoop/hadoop-3.3.6/ $HADOOP_HOME/
-COPY hadoop/apache-hive-3.1.3-bin/ $HIVE_HOME/
+# COPY hadoop/hadoop-3.3.6/ $HADOOP_HOME/
+# COPY hadoop/apache-hive-3.1.3-bin/ $HIVE_HOME/
 
 # Clean up unnecessary packages
 # RUN apt-get remove --purge -yqq $(apt-mark showmanual) --allow-remove-essential && \
