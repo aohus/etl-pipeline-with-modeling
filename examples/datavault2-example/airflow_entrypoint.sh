@@ -28,24 +28,6 @@ if [ -e "/requirements.txt" ]; then
     $(which pip) install --user -r /requirements.txt
 fi
 
-# Load DAGs exemples (default: Yes)
-if [ "$INSTALL_HIVE" = "y" ]; then
-    # mkdir -p /tmp/hadoop
-    # (cd /tmp/hadoop; wget https://archive.apache.org/dist/hadoop/common/hadoop-2.6.0/hadoop-2.6.0.tar.gz)
-    # (cd /tmp/hadoop; tar -zxf hadoop-2.6.0.tar.gz)
-    # (cd /tmp/hadoop; mv hadoop-2.6.0/* $HADOOP_DIR)
-    # mkdir -p /tmp/hive
-    # (cd /tmp/hive; wget https://downloads.apache.org/hive/hive-2.3.10/apache-hive-2.3.10-bin.tar.gz)
-    # (cd /tmp/hive; tar -zxf apache-hive-2.3.10-bin.tar.gz)
-    # (cd /tmp/hive; mv apache-hive-2.3.10-bin.tar.gz/* $HIVE_DIR)
-    # rm -rf /tmp/hadoop
-    # rm -rf /tmp/hive
-    cp /core-site.xml $HADOOP_DIR/etc/hadoop
-    cp /hdfs-site.xml $HADOOP_DIR/etc/hadoop
-    cp /mapred-site.xml $HADOOP_DIR/etc/hadoop
-fi
-
-
 # Update airflow config - Fernet key
 sed -i "s|\$FERNET_KEY|$FERNET_KEY|" "$AIRFLOW_HOME"/airflow.cfg
 

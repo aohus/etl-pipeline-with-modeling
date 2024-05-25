@@ -3,10 +3,20 @@
 ## 개요
 Docker를 사용하여 Hadoop 생태계의 구성 요소와 기타 필수 서비스를 컨테이너화하여 강력한 데이터 엔지니어링 환경을 설정하는 방법을 보여줍니다. 설정에는 Hadoop (HDFS, YARN), Apache Hive, PostgreSQL 및 Apache Airflow가 포함되며, 이들 모두가 원활하게 작동하도록 구성되어 있습니다. [ETL Best practices with airflow](https://github.com/gtoonstra/etl-with-airflow)의 airflow code를 기반으로하며 오래되어 동작하지 않는 Haddop 생태계를 재구성하였습니다. 
 
+
 ## 목적
 1. 하둡 생태계의 구성을 알기쉽게 docker container로 구성하고 Web UI를 통해 모니터리할 수 있는 환경울 구성합니다.
 2. Airflow를 통해 PostgreSQL 에서 HDFS로 데이터를 옮기고 모델링하여 저장하는 파이프라인을 구축합니다. 
 3. 랄프 킴벌의 starschema와 datavault 방식의 데이터모델링 예시를 보여줍니다. 
+
+
+## Docker Container
+![docker-container](./assets/etl-pipeline.png)
+
+
+## PIPELINE 개요
+TODO
+
 
 ## 사용 방법
 1. clone repository
@@ -31,6 +41,7 @@ docker-compose -f docker-compose-datavault2 up -d
 
 
 ## TODO
-- [ ] HIVE data 모니터링 
+![docker-container](./assets/etl-pipeline-todo.png)
+- [ ] HIVE 고도화(metastore 분리, 모니터링 기능)
 - [ ] airflow celery worker 버전 
 - [ ] use dbt
