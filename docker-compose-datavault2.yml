@@ -41,7 +41,6 @@ services:
       - 10002:10002
     volumes:
       - ./examples/datavault2-example/hadoop_config/hive-site-simple.xml:/opt/hive/conf/hive-site.xml
-      - ./examples/datavault2-example/hadoop_config/core-site.xml:/opt/hive/conf/core-site.xml
     environment:
       - SERVICE_NAME=hiveserver2
       - HIVE_CUSTOM_CONF_DIR=/opt/hive/conf
