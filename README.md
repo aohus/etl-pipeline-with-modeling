@@ -46,7 +46,7 @@ Data Vault는 엔터프라이즈급 분석을 위한 데이터 웨어하우스�
 - staging 단계에서는 RDBMS에 있던 데이터를 거의 그대로 HDFS로 로드합니다.
 - 각 hub에서 비즈니스 키로 사용할 컬럼을 추가합니다. 
 
-예시는 다음과 같습니다. 
+RDBMS에서 데이터를 가져오는 예시는 다음과 같습니다. 
 ```SQL
 SELECT
       sohsr.salesorderid
@@ -58,14 +58,20 @@ SELECT
         , LTRIM(RTRIM(COALESCE(CAST(sr.name as varchar), '')))
       ) as hkey_salesorderreason
 FROM
-            sales.salesorderheadersalesreason sohsr
+    sales.salesorderheadersalesreason sohsr
 INNER JOIN  sales.salesreason sr ON sohsr.salesreasonid = sr.salesreasonid 
 ```
 ![airflow-staging](./assets/airflow-staging.png)
 
+staging 단계에서 airflow는 다음의 순서로 데이터를 추출하고 로드합니다: 
+- PostgreSQL에서 위 쿼리로 가져온 데이터를 Airflow 임시 파일 저장소에 씁니다.
+- hdfs 명령(`hdfs dfs -put airflow/tmp/file/path hdfs/destination/file/path`)으로 임시 파일을 hdfs로 옮깁니다.
+- hive 명령(`LOAD DATA INPATH 'hdfs/destination/file/path' OVERWRITE INTO TABLE tablename_20240523t000000;`)으로 hdfs 데이터를 테이블 형태로 씁니다.
 
-2. hubs
+
+2. hub
 - hub는 핵심 비즈니스 개념을 나타냅니다.
+- hub, link, satillite 단계에는 HQL로 데이터를 transform하여 저장합니다. 
 
 ```HQL
 SELECT
@@ -87,7 +93,8 @@ INNER JOIN  sales.specialoffer so ON sod.specialofferid = so.specialofferid
 INNER JOIN  production.product p ON sod.productid = p.productid
 ```
 
-3. links
+
+3. link
 - hub 엔터티 간의 관계를 나타냅니다.
 
 예시는 다음과 같습니다. 
@@ -113,7 +120,7 @@ WHERE
     )
 ```
 
-4. satellites
+4. satellite
 - satillite은 누락된 핵심 비즈니스 개념 설명 정보에 대한 추가 정보를 제공합니다. 
 
 예시는 다음과 같습니다. 
