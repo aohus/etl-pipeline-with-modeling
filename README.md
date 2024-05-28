@@ -15,6 +15,11 @@ Docker를 사용하여 Hadoop 생태계의 구성 요소와 기타 필수 서비
 ## 프로젝트 상세
 
 ### Overall flow
+
+**architecture**
+![etl-architecture](./assets/etl-architecture.png)
+
+**data flow**
 ![etl-datavault](./assets/etl-datavault.png)
 
 
