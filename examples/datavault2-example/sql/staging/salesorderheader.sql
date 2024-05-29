@@ -75,3 +75,5 @@ INNER JOIN  person.address a2 ON soh.shiptoaddressid = a2.addressid
 INNER JOIN  purchasing.shipmethod sm ON soh.shipmethodid = sm.shipmethodid
 LEFT JOIN   sales.creditcard cc ON soh.creditcardid = cc.creditcardid
 LEFT JOIN   sales.currencyrate cr ON soh.currencyrateid = cr.currencyrateid
+WHERE soh.modifieddate >= '{{ execution_date.strftime('%Y-%m-%d') }}'
+  AND soh.modifieddate < '{{ (execution_date + macros.timedelta(days=1)).strftime('%Y-%m-%d') }}';

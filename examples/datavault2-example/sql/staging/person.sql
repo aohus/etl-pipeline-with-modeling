@@ -11,3 +11,5 @@ SELECT
     , LTRIM(RTRIM(COALESCE(CAST(p.businessentityid as varchar), ''))) as hkey_person
 FROM
     person.person p
+WHERE p.modifieddate >= '{{ execution_date.strftime('%Y-%m-%d') }}'
+  AND p.modifieddate < '{{ (execution_date + macros.timedelta(days=1)).strftime('%Y-%m-%d') }}';

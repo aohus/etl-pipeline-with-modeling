@@ -10,3 +10,5 @@ SELECT
 FROM
             sales.salesorderheadersalesreason sohsr
 INNER JOIN  sales.salesreason sr ON sohsr.salesreasonid = sr.salesreasonid
+WHERE sohsr.modifieddate >= '{{ execution_date.strftime('%Y-%m-%d') }}'
+  AND sohsr.modifieddate < '{{ (execution_date + macros.timedelta(days=1)).strftime('%Y-%m-%d') }}';

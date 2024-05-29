@@ -25,3 +25,5 @@ SELECT
 FROM
            person.address a
 INNER JOIN person.stateprovince sp ON a.stateprovinceid = sp.stateprovinceid
+WHERE a.modifieddate >= '{{ execution_date.strftime('%Y-%m-%d') }}'
+  AND a.modifieddate < '{{ (execution_date + macros.timedelta(days=1)).strftime('%Y-%m-%d') }}';

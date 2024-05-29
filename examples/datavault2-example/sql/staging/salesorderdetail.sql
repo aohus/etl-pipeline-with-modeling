@@ -15,3 +15,5 @@ FROM
             sales.salesorderdetail sod
 INNER JOIN  sales.specialoffer so ON sod.specialofferid = so.specialofferid
 INNER JOIN  production.product p ON sod.productid = p.productid
+WHERE sod.modifieddate >= '{{ execution_date.strftime('%Y-%m-%d') }}'
+  AND sod.modifieddate < '{{ (execution_date + macros.timedelta(days=1)).strftime('%Y-%m-%d') }}';

@@ -13,3 +13,5 @@ SELECT
     , LTRIM(RTRIM(COALESCE(CAST(cr.tocurrencycode as varchar), ''))) as hkey_currency_tocurrencycode
 FROM
     sales.currencyrate cr
+WHERE cr.modifieddate >= '{{ execution_date.strftime('%Y-%m-%d') }}'
+  AND cr.modifieddate < '{{ (execution_date + macros.timedelta(days=1)).strftime('%Y-%m-%d') }}';
